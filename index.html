@@ -409,7 +409,8 @@ function rTbl(){
   const tb3=fD.reduce((a,r)=>a+r.mo_ta_list.filter(m=>m.includes('-TB-')||m.includes('(TB)')).length,0);
   const tp=fD.reduce((a,r)=>a+r.mo_ta_list.filter(m=>m.toLowerCase().includes('tap')).length,0);
   const mxF=fD.filter(r=>isMX(r)).length;
-  tf.innerHTML=`<tr><td colspan="2">&#931; <b>${tot}</b> điểm đo &bull; <b>${segsF}</b> đoạn ống</td><td colspan="2">CB:<b>${cb}</b> &bull; TB:<b>${tb3}</b> &bull; Tap:<b>${tp}</b></td><td colspan="3" style="color:#6b21a8">&#128279; Đường hàn MX: <b>${mxF}</b> vị trí${mxF&&cS!=='MX'?' &mdash; <span style="cursor:pointer;text-decoration:underline" onclick="fSec('MX',null)">Xem tất cả</span>':''}</td></tr>`;
+  const mxLink=mxF&&cS!=='MX'?` &mdash; <span style="cursor:pointer;text-decoration:underline;color:#7c3aed" onclick="fSec('MX',null)">Xem tất cả &#8594;</span>`:'';
+  tf.innerHTML=`<tr><td colspan="2">&#931; <b>${tot}</b> điểm đo &bull; <b>${segsF}</b> đoạn ống</td><td colspan="2">CB:<b>${cb}</b> &bull; TB:<b>${tb3}</b> &bull; Tap:<b>${tp}</b></td><td colspan="3" style="color:#6b21a8">&#128279; Đường hàn MX: <b>${mxF}</b> vị trí${mxLink}</td></tr>`;
 }
 function txp(stt){
   const r=document.getElementById('ex-'+stt),mr=document.getElementById('row-'+stt);
