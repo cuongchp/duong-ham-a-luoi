@@ -20,6 +20,16 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--g1);color:var(--g7
 .tab{padding:7px 16px;border-radius:20px;border:2px solid var(--bl);background:#fff;color:var(--bd);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
 .tab:hover{background:var(--bl)}
 .tab.active{background:var(--b);color:#fff;border-color:var(--b);box-shadow:0 2px 8px rgba(14,165,233,.35)}
+.tab-mx{border-color:#e9d5ff;color:#6b21a8;background:#faf5ff}
+.tab-mx:hover{background:#e9d5ff}
+.tab-mx.active{background:#7c3aed;color:#fff;border-color:#7c3aed;box-shadow:0 2px 8px rgba(124,58,237,.4)}
+.mx-seg-card{background:#fff;border-radius:8px;padding:12px 14px;border-left:4px solid #7c3aed;box-shadow:var(--sh)}
+.mx-seg-card .msn{font-size:22px;font-weight:800;color:#6b21a8}
+.mx-seg-card .mst{font-size:11px;font-weight:700;color:#6b21a8;margin-bottom:4px}
+.mx-seg-card .mss{font-size:11px;color:var(--g5)}
+.lt-chip{padding:5px 12px;background:#faf5ff;border:1px solid #e9d5ff;border-radius:16px;font-size:11px;font-weight:600;color:#6b21a8;cursor:pointer;transition:all .15s}
+.lt-chip:hover{background:#7c3aed;color:#fff;border-color:#7c3aed}
+.mx-badge{display:inline-block;padding:2px 7px;background:#f3e8ff;color:#6b21a8;border-radius:10px;font-size:10px;font-weight:700;margin-left:4px;border:1px solid #e9d5ff}
 .diag-wrap{background:#fff;border-radius:var(--r);padding:18px 20px;margin-bottom:20px;box-shadow:var(--sh)}
 .diag-wrap h2{font-size:14px;font-weight:700;color:var(--bd);margin-bottom:14px}
 .diag{display:flex;align-items:stretch;overflow-x:auto;padding-bottom:6px;gap:0}
@@ -141,6 +151,7 @@ tfoot td{background:var(--bp);font-weight:700;font-size:12px;color:var(--bd);pad
     <button class="tab" onclick="fSec('PĐ 4',this)">Phân đoạn 4</button>
     <button class="tab" onclick="fSec('PĐ 5',this)">Phân đoạn 5</button>
     <button class="tab" onclick="fSec('PĐ 6',this)">Phân đoạn 6</button>
+    <button class="tab tab-mx" onclick="fSec('MX',this)">&#128279; Đường hàn MX</button>
   </div>
 
   <div class="diag-wrap">
@@ -185,6 +196,24 @@ tfoot td{background:var(--bp);font-weight:700;font-size:12px;color:var(--bd);pad
   </div>
 
   <div class="sg" id="sg"></div>
+
+  <!-- MX PANEL: shown only when MX filter active -->
+  <div id="mxPanel" style="display:none;margin-bottom:20px;">
+    <div style="background:linear-gradient(135deg,#6b21a8,#7c3aed);border-radius:var(--r);padding:16px 20px;color:#fff;margin-bottom:14px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+        <div>
+          <div style="font-size:16px;font-weight:800;">&#128279; THỐNG KÊ ĐƯỜNG HÀN MX (Đã ốp măng xông)</div>
+          <div style="font-size:12px;opacity:.85;margin-top:3px;">Các vị trí đường hàn đã được ốp măng xông xử lý khuyết tật</div>
+        </div>
+        <div id="mxTotalBdg" style="background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);padding:6px 16px;border-radius:20px;font-size:14px;font-weight:800;"></div>
+      </div>
+    </div>
+    <div id="mxSecGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:16px;"></div>
+    <div style="background:#fff;border-radius:var(--r);padding:14px 18px;box-shadow:var(--sh);">
+      <div style="font-size:13px;font-weight:700;color:#6b21a8;margin-bottom:10px;">&#128203; Danh sách lý trình có đường hàn MX</div>
+      <div id="mxLyTrinhList" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+    </div>
+  </div>
 
   <div class="lgd">
     <h2 onclick="tgLgd(this)">&#128218; Hướng dẫn đọc ký hiệu <span id="lgdArr">&#9660;</span></h2>
@@ -263,41 +292,82 @@ const SC={'PĐ 1':'pd1','PĐ 2':'pd2','PĐ 3':'pd3','PĐ 4':'pd4','PĐ 5':'pd5',
 const TC={'38':'#1e40af','20':'#166534','22':'#134e4a','18':'#5b21b6'};
 const SI={'PĐ 1':{r:'Km11+667 ÷ Km11+551',n:''},'PĐ 2':{r:'Km11+551 ÷ Km11+492',n:''},'PĐ 3':{r:'Km11+492 ÷ Km11+423',n:'⚠ Địa chất yếu - Đứt gãy IV,V'},'PĐ 4':{r:'Km11+423 ÷ Km11+232',n:'Đoạn dài nhất'},'PĐ 5':{r:'Km11+232 ÷ Km10+987',n:''},'PĐ 6':{r:'Km10+987 ÷ Km10+886',n:'Gần chân giếng đứng 2'}};
 function gc(c){if(!c)return '';if(c.startsWith('ĐH')&&!c.startsWith('ĐHĐS'))return 'dh';if(c.startsWith('ĐHĐS'))return 'dhds';if(c.includes('-CB-'))return 'cb';if(c.includes('-TB-')||c.includes('(TB)'))return 'tb';if(c.toLowerCase().includes('tap'))return 'tap';if(c.endsWith('-MX')||c.includes('-MX'))return 'mx';return '';}
+function isMX(r){return r.mo_ta_list.some(m=>m.includes('-MX'));}
 function rSg(){
   const secs=['PĐ 1','PĐ 2','PĐ 3','PĐ 4','PĐ 5','PĐ 6'];
+  const mxAll=aD.filter(r=>isMX(r));
   document.getElementById('sg').innerHTML=secs.map(s=>{
     const rs=aD.filter(r=>r.phan_doan===s),tk=rs.length?rs[0].chieu_day:'-';
-    const tm=rs.reduce((a,r)=>a+r.mo_ta_list.length,0);
+    const segs=Math.max(0,rs.length-1);
+    const mxC=rs.filter(r=>isMX(r)).length;
     const cb=rs.reduce((a,r)=>a+r.mo_ta_list.filter(m=>m.includes('-CB-')).length,0);
     const tb=rs.reduce((a,r)=>a+r.mo_ta_list.filter(m=>m.includes('-TB-')||m.includes('(TB)')).length,0);
     const tp=rs.reduce((a,r)=>a+r.mo_ta_list.filter(m=>m.toLowerCase().includes('tap')).length,0);
-    const inf=SI[s]||{};const ac=cS===s?'active':'';
+    const inf=SI[s]||{};const ac=(cS===s)?'active':'';
     return `<div class="sc ${ac}" onclick="fSec('${s}',null)">
       <div class="sc-hd"><div class="sc-ti">${s.replace('PĐ','Phân đoạn')}</div><div class="sc-bdg">${tk} mm</div></div>
       <div class="sc-n">${rs.length}</div>
-      <div class="sc-s">điểm đo &bull; ${tm} ký hiệu</div>
+      <div class="sc-s">điểm đo &bull; <b>${segs}</b> đoạn ống</div>
       <div class="sc-r">${inf.r||''}<br>
       <span style="color:#166534">CB:${cb}</span> &bull; <span style="color:#854d0e">TB:${tb}</span> &bull; <span style="color:#9f1239">Tap:${tp}</span>
+      ${mxC?`&bull; <span style="color:#6b21a8;font-weight:700;cursor:pointer" onclick="event.stopPropagation();fSec('MX',null)">MX:${mxC}</span>`:''}
       ${inf.n?`<br><span style="color:#d97706;font-weight:600;font-size:10px">${inf.n}</span>`:''}
       </div></div>`;
   }).join('');
+}
+function rMX(){
+  const mxRecs=aD.filter(r=>isMX(r));
+  const secs=['PĐ 1','PĐ 2','PĐ 3','PĐ 4','PĐ 5','PĐ 6'];
+  document.getElementById('mxTotalBdg').textContent=mxRecs.length+' vị trí MX / '+aD.length+' điểm đo';
+  document.getElementById('mxSecGrid').innerHTML=secs.map(s=>{
+    const cnt=mxRecs.filter(r=>r.phan_doan===s).length;
+    if(!cnt)return `<div class="mx-seg-card" style="opacity:.45"><div class="mst">${s.replace('PĐ','Phân đoạn')}</div><div class="msn">0</div><div class="mss">vị trí MX</div></div>`;
+    return `<div class="mx-seg-card"><div class="mst">${s.replace('PĐ','Phân đoạn')}</div><div class="msn">${cnt}</div><div class="mss">vị trí MX</div></div>`;
+  }).join('');
+  document.getElementById('mxLyTrinhList').innerHTML=mxRecs.map(r=>{
+    const mxCodes=r.mo_ta_list.filter(m=>m.includes('-MX'));
+    return `<span class="lt-chip" onclick="scrollToRow(${r.stt})" title="${mxCodes.join(', ')}">
+      <b>STT ${r.stt}</b> &mdash; ${r.ly_trinh}
+      <span class="mx-badge">${mxCodes.length} MX</span>
+    </span>`;
+  }).join('');
+}
+function scrollToRow(stt){
+  cS='MX';cQ='';cP=1;
+  aF();
+  setTimeout(()=>{
+    const el=document.getElementById('row-'+stt);
+    if(el){el.scrollIntoView({behavior:'smooth',block:'center'});el.style.outline='3px solid #7c3aed';setTimeout(()=>el.style.outline='',2000);}
+  },200);
 }
 function fSec(s,btn){
   cS=s;cP=1;
   document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
   if(btn)btn.classList.add('active');
-  else{const ts=document.querySelectorAll('.tab');if(s==='all')ts[0].classList.add('active');else{const i=['PĐ 1','PĐ 2','PĐ 3','PĐ 4','PĐ 5','PĐ 6'].indexOf(s)+1;if(ts[i])ts[i].classList.add('active');}}
+  else{
+    const ts=document.querySelectorAll('.tab');
+    if(s==='all')ts[0].classList.add('active');
+    else if(s==='MX'){ts[ts.length-1].classList.add('active');}
+    else{const i=['PĐ 1','PĐ 2','PĐ 3','PĐ 4','PĐ 5','PĐ 6'].indexOf(s)+1;if(ts[i])ts[i].classList.add('active');}
+  }
+  document.getElementById('mxPanel').style.display=(s==='MX')?'block':'none';
+  if(s==='MX')rMX();
   aF();rSg();
 }
 function doSrch(){cQ=document.getElementById('srch').value.toLowerCase();cP=1;aF();}
 function aF(){
   fD=aD.filter(r=>{
-    const so=cS==='all'||r.phan_doan===cS;if(!so)return false;
+    let so;
+    if(cS==='all')so=true;
+    else if(cS==='MX')so=isMX(r);
+    else so=r.phan_doan===cS;
+    if(!so)return false;
     if(!cQ)return true;
     return String(r.stt).includes(cQ)||r.ly_trinh.toLowerCase().includes(cQ)||r.phan_doan.toLowerCase().includes(cQ)||r.chieu_day.includes(cQ)||r.mo_ta_list.some(m=>m.toLowerCase().includes(cQ))||(r.ghi_chu&&r.ghi_chu.toLowerCase().includes(cQ));
   });
   rTbl();rPag();
-  document.getElementById('rc').textContent=fD.length+' / '+aD.length+' điểm đo';
+  const label=cS==='MX'?'đường hàn MX':'điểm đo';
+  document.getElementById('rc').textContent=fD.length+' / '+aD.length+' '+label;
 }
 function hl(t){if(!cQ)return t;const re=new RegExp('('+cQ.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi');return t.replace(re,'<mark class="hl">$1</mark>');}
 function rTbl(){
@@ -311,15 +381,16 @@ function rTbl(){
     const cb=r.mo_ta_list.filter(m=>m.includes('-CB-')).length;
     const tb2=r.mo_ta_list.filter(m=>m.includes('-TB-')||m.includes('(TB)')).length;
     const tp=r.mo_ta_list.filter(m=>m.toLowerCase().includes('tap')).length;
+    const mxC=r.mo_ta_list.filter(m=>m.includes('-MX')).length;
     const oi=aD.findIndex(x=>x.stt===r.stt);
     return `<tr id="row-${r.stt}">
       <td class="ts-stt">${hl(String(r.stt))}</td>
-      <td class="ts-pd"><span class="pd-b ${pc}">${r.phan_doan}</span></td>
+      <td class="ts-pd"><span class="pd-b ${pc}">${r.phan_doan}</span>${mxC?`<br><span class="mx-badge" style="display:inline-block;margin-top:3px">MX</span>`:''}</td>
       <td class="ts-lt">${hl(r.ly_trinh)}</td>
       <td class="ts-th"><span class="tb-bdg" style="background:${tc}22;color:${tc}">${r.chieu_day}</span></td>
       <td class="ts-mt"><span class="mt-p">${hl(pv)}</span>${mo}
         <div style="font-size:10px;color:#64748b;margin-top:3px">
-          ${cb?`<span style="color:#166534">CB:${cb}</span> `:''}${tb2?`<span style="color:#854d0e">TB:${tb2}</span> `:''}${tp?`<span style="color:#9f1239">Tap:${tp}</span>`:''}
+          ${cb?`<span style="color:#166534">CB:${cb}</span> `:''}${tb2?`<span style="color:#854d0e">TB:${tb2}</span> `:''}${tp?`<span style="color:#9f1239">Tap:${tp}</span> `:''}${mxC?`<span style="color:#6b21a8;font-weight:700">MX:${mxC}</span>`:''}
         </div></td>
       <td style="font-size:12px;color:#64748b">${r.ghi_chu||'&mdash;'}</td>
       <td class="ts-ac">
@@ -333,11 +404,12 @@ function rTbl(){
       ${r.ghi_chu?`<div style="margin-top:10px;font-size:12px;color:#334155"><b>Ghi chú:</b> ${r.ghi_chu}</div>`:''}
     </div></td></tr>`;
   }).join('');
-  const tot=fD.length,tm=fD.reduce((a,r)=>a+r.mo_ta_list.length,0);
+  const tot=fD.length,segsF=Math.max(0,tot-1);
   const cb=fD.reduce((a,r)=>a+r.mo_ta_list.filter(m=>m.includes('-CB-')).length,0);
   const tb3=fD.reduce((a,r)=>a+r.mo_ta_list.filter(m=>m.includes('-TB-')||m.includes('(TB)')).length,0);
   const tp=fD.reduce((a,r)=>a+r.mo_ta_list.filter(m=>m.toLowerCase().includes('tap')).length,0);
-  tf.innerHTML=`<tr><td colspan="4">&#931; Tổng: <b>${tot}</b> điểm đo &bull; <b>${tm}</b> ký hiệu</td><td colspan="3">CB:<b>${cb}</b> &bull; TB:<b>${tb3}</b> &bull; Tap:<b>${tp}</b></td></tr>`;
+  const mxF=fD.filter(r=>isMX(r)).length;
+  tf.innerHTML=`<tr><td colspan="2">&#931; <b>${tot}</b> điểm đo &bull; <b>${segsF}</b> đoạn ống</td><td colspan="2">CB:<b>${cb}</b> &bull; TB:<b>${tb3}</b> &bull; Tap:<b>${tp}</b></td><td colspan="3" style="color:#6b21a8">&#128279; Đường hàn MX: <b>${mxF}</b> vị trí${mxF&&cS!=='MX'?' &mdash; <span style="cursor:pointer;text-decoration:underline" onclick="fSec('MX',null)">Xem tất cả</span>':''}</td></tr>`;
 }
 function txp(stt){
   const r=document.getElementById('ex-'+stt),mr=document.getElementById('row-'+stt);
