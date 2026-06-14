@@ -128,6 +128,13 @@ tfoot td{background:var(--bp);font-weight:700;font-size:12px;color:var(--bd);pad
 .hl{background:#fef08a;border-radius:3px;padding:0 2px}
 @media(max-width:768px){.sg{grid-template-columns:repeat(2,1fr)}.fr{grid-template-columns:1fr}.hdr-bdg{display:none}.ctrl{flex-direction:column;align-items:stretch}.srch{min-width:0}}
 @media(max-width:480px){.sg{grid-template-columns:1fr}.tabs{gap:4px}.tab{padding:5px 12px;font-size:12px}.main{padding:12px 10px}}
+.fault-ruler{margin:10px 0 22px;position:relative}
+.fault-ruler-lbl{font-size:10px;color:#dc2626;font-weight:700;margin-bottom:4px;padding-left:2px;display:flex;align-items:center;gap:4px}
+.fault-ruler-bar{position:relative;height:14px;border-radius:999px;background:#f1f5f9;border:1px solid #e2e8f0;overflow:visible}
+.fault-ruler-km{position:absolute;top:calc(100% + 3px);font-size:9px;color:#64748b;transform:translateX(-50%);white-space:nowrap;font-weight:600}
+.fault-zone{position:absolute;top:2px;bottom:2px;background:rgba(220,38,38,.85);border:1px solid rgba(185,28,28,.95);border-radius:2px;cursor:default;min-width:4px;z-index:10;transition:background .15s,box-shadow .15s}
+.fault-zone:hover{background:#dc2626;box-shadow:0 0 0 3px rgba(220,38,38,.3)}
+.fz-tip{display:none;position:fixed;background:rgba(15,23,42,.97);color:#fff;padding:8px 12px;border-radius:8px;font-size:11px;font-weight:600;line-height:1.7;z-index:9999;pointer-events:none;border:1px solid rgba(255,255,255,.15);white-space:pre;box-shadow:0 4px 16px rgba(0,0,0,.45)}
 </style>
 </head>
 <body>
@@ -191,6 +198,29 @@ tfoot td{background:var(--bp);font-weight:700;font-size:12px;color:var(--bd);pad
         <div class="nd-ic">&#8593;</div>
         <div class="nd-lbl">Chân GĐ2</div>
         <div class="nd-km">Km10+886</div>
+      </div>
+    </div>
+    <!-- Thước tỷ lệ đứt gãy bậc IV -->
+    <div class="fault-ruler">
+      <div class="fault-ruler-lbl">&#128308; Đứt gãy bậc IV &mdash; <em style="font-weight:400;color:#94a3b8">rê chuột vào vạch đỏ để xem chi tiết</em></div>
+      <div class="fault-ruler-bar">
+        <!-- Vùng địa chất yếu Km11+500→Km11+200 -->
+        <div style="position:absolute;top:2px;bottom:2px;left:21.38%;width:38.42%;background:rgba(251,146,60,.22);border:1px solid rgba(154,52,18,.3);border-radius:999px"></div>
+        <!-- Km markers -->
+        <div class="fault-ruler-km" style="left:0%;transform:translateX(0)">Km11+667</div>
+        <div class="fault-ruler-km" style="left:21.38%;color:#dc2626">Km11+500</div>
+        <div class="fault-ruler-km" style="left:59.80%;color:#dc2626">Km11+200</div>
+        <div class="fault-ruler-km" style="left:100%;transform:translateX(-100%)">Km10+886</div>
+        <!-- 9 vùng đứt gãy bậc IV -->
+        <div class="fault-zone" style="left:13.79%;width:.68%" data-tip="&#128308; Đứt gãy bậc IV  |  #9&#10;Từ: Km11+565,92&#10;Đến: Km11+570,69&#10;Chiều dài: 4,77 m"></div>
+        <div class="fault-zone" style="left:15.44%;width:.47%" data-tip="&#128308; Đứt gãy bậc IV  |  #8&#10;Từ: Km11+555,80&#10;Đến: Km11+559,05&#10;Chiều dài: 3,25 m"></div>
+        <div class="fault-zone" style="left:24.20%;width:.71%" data-tip="&#128308; Đứt gãy bậc IV  |  #7&#10;Từ: Km11+484,15&#10;Đến: Km11+489,79&#10;Chiều dài: 5,64 m"></div>
+        <div class="fault-zone" style="left:26.87%;width:.46%" data-tip="&#128308; Đứt gãy bậc IV  |  #6&#10;Từ: Km11+464,65&#10;Đến: Km11+468,41&#10;Chiều dài: 3,76 m"></div>
+        <div class="fault-zone" style="left:34.04%;width:.56%" data-tip="&#128308; Đứt gãy bậc IV  |  #5&#10;Từ: Km11+406,28&#10;Đến: Km11+410,84&#10;Chiều dài: 4,56 m"></div>
+        <div class="fault-zone" style="left:40.81%;width:.31%" data-tip="&#128308; Đứt gãy bậc IV  |  #4&#10;Từ: Km11+353,92&#10;Đến: Km11+356,43&#10;Chiều dài: 2,51 m"></div>
+        <div class="fault-zone" style="left:48.88%;width:7.45%" data-tip="&#128308; Đứt gãy bậc IV  |  #3&#10;Từ: Km11+231,79&#10;Đến: Km11+291,53&#10;Chiều dài: 59,74 m"></div>
+        <div class="fault-zone" style="left:59.31%;width:.25%" data-tip="&#128308; Đứt gãy bậc IV  |  #2&#10;Từ: Km11+205,89&#10;Đến: Km11+207,83&#10;Chiều dài: 1,94 m"></div>
+        <div class="fault-zone" style="left:74.62%;width:.35%" data-tip="&#128308; Đứt gãy bậc IV  |  #1&#10;Từ: Km11+081,44&#10;Đến: Km11+084,19&#10;Chiều dài: 2,75 m"></div>
       </div>
     </div>
   </div>
@@ -467,6 +497,20 @@ function svLS(){try{localStorage.setItem('dhALuoi',JSON.stringify(aD));}catch(e)
 function ldLS(){try{const d=localStorage.getItem('dhALuoi');if(d){aD=JSON.parse(d);}}catch(e){}}
 document.getElementById('moOv').addEventListener('click',function(e){if(e.target===this)clMo();});
 ldLS();rSg();aF();
+// Fault zone tooltip
+(function(){
+  const tip=document.createElement('div');tip.className='fz-tip';document.body.appendChild(tip);
+  document.querySelectorAll('.fault-zone').forEach(function(el){
+    el.addEventListener('mousemove',function(e){
+      tip.textContent=el.dataset.tip;tip.style.display='block';
+      var x=e.clientX-tip.offsetWidth/2, y=e.clientY+16;
+      x=Math.max(4,Math.min(x,window.innerWidth-tip.offsetWidth-4));
+      if(y+tip.offsetHeight>window.innerHeight-4)y=e.clientY-tip.offsetHeight-14;
+      tip.style.left=x+'px';tip.style.top=y+'px';
+    });
+    el.addEventListener('mouseleave',function(){tip.style.display='none';});
+  });
+})();
 </script>
 </body>
 </html>
